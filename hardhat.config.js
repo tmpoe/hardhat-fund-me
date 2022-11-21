@@ -1,6 +1,7 @@
 require("@nomicfoundation/hardhat-toolbox")
 require("@nomiclabs/hardhat-etherscan")
 require("hardhat-gas-reporter")
+require("hardhat-deploy")
 require("solidity-coverage")
 require("dotenv").config()
 
@@ -33,5 +34,8 @@ module.exports = {
     noColors: true,
     currency: "USD",
     coinmarketcap: COINMARKETCAP_API_KEY
+  },
+  namedAccounts: {
+    default: 0
   }
 }
