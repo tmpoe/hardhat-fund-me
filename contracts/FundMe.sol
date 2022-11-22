@@ -15,7 +15,7 @@ contract FundMe {
     // Could we make this constant?  /* hint: no! We should make it immutable! */
     address public /* immutable */ i_owner;
     uint256 public constant MINIMUM_USD = 50 * 10 ** 18;
-    AggregatorV3Interface priceFeed;
+    AggregatorV3Interface public priceFeed;
 
     modifier onlyOwner {
         // require(msg.sender == owner);
