@@ -45,17 +45,38 @@ describe("FundMe", async () => {
     })
   })
   describe("withdraw", async () => {
+    let startingDeployerBalance
+    let startingFundMeBalance
     beforeEach(async () => {
       await fundMe.fund({ value: sendValue })
       const savedValue = await fundMe.addressToAmountFunded(deployer)
       const funder = await fundMe.funders(0)
 
-      assert.notEqual(sendValue.toString(), "0")
+      assert.notEqual(savedValue, 0)
       assert.notEqual(funder, constants.ZERO_ADDRESS)
+
+      startingDeployerBalance = await fundMe.provider.getBalance(deployer)
+      startingFundMeBalance = await fundMe.provider.getBalance(fundMe.address)
+
+      assert.notEqual(startingFundMeBalance, 0)
     })
 
     it("withdraws money from a single funder", async () => {
-      assert(true)
+      const transactionResponse = await fundMe.withdraw()
+      const transactionReceipt = await transactionResponse.wait(1)
+      const { gasUsed, effectiveGasPrice } = transactionReceipt
+      const gasCost = gasUsed.mul(effectiveGasPrice)
+
+      const endingDeployerBalance = await fundMe.provider.getBalance(deployer)
+      const endingFundMeBalance = await fundMe.provider.getBalance(
+        fundMe.address
+      )
+
+      assert.equal(
+        endingDeployerBalance.add(gasCost).toString(),
+        startingFundMeBalance.add(startingDeployerBalance).toString()
+      )
+      assert.equal(endingFundMeBalance, 0)
     })
   })
 })
