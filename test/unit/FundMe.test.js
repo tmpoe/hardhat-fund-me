@@ -1,4 +1,5 @@
 const { deployments, ethers, getNamedAccounts } = require("hardhat")
+const constants = require("@openzeppelin/test-helpers")
 const { assert, expect } = require("chai")
 
 describe("FundMe", async () => {
@@ -34,6 +35,27 @@ describe("FundMe", async () => {
       console.log("piripocs2")
 
       assert.equal(savedValue.toString(), sendValue.toString())
+    })
+
+    it("adds funder to array of funders", async () => {
+      await fundMe.fund({ value: sendValue })
+
+      const funder = await fundMe.funders(0)
+      assert.equal(funder, deployer)
+    })
+  })
+  describe("withdraw", async () => {
+    beforeEach(async () => {
+      await fundMe.fund({ value: sendValue })
+      const savedValue = await fundMe.addressToAmountFunded(deployer)
+      const funder = await fundMe.funders(0)
+
+      assert.notEqual(sendValue.toString(), "0")
+      assert.notEqual(funder, constants.ZERO_ADDRESS)
+    })
+
+    it("withdraws money from a single funder", async () => {
+      assert(true)
     })
   })
 })
