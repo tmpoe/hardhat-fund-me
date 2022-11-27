@@ -17,4 +17,4 @@ async function verify(contractAddress, constructorArgs) {
   }
 }
 
-modules.exports = { verify }
+module.exports = { verify }

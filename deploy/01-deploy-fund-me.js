@@ -7,7 +7,6 @@ module.exports = async hre => {
   const { deploy, log } = deployments
   const { deployer } = await getNamedAccounts()
   const chainId = network.config.chainId
-
   let ethUsdPriceFeedAddress
 
   if (developmentChains.includes(network.name)) {
