@@ -16,7 +16,7 @@ describe("FundMe", async () => {
 
   describe("constructor", async () => {
     it("sets the aggregator correctly", async () => {
-      const response = await fundMe.priceFeed()
+      const response = await fundMe.getPriceFeed()
       assert.equal(response, mockV3Aggregator.address)
     })
   })
@@ -31,8 +31,7 @@ describe("FundMe", async () => {
     it("correctly updates the funds sent", async () => {
       await fundMe.fund({ value: sendValue })
 
-      const savedValue = await fundMe.addressToAmountFunded(deployer)
-      console.log("piripocs2")
+      const savedValue = await fundMe.getAddressToAmountFunded(deployer)
 
       assert.equal(savedValue.toString(), sendValue.toString())
     })
@@ -40,7 +39,7 @@ describe("FundMe", async () => {
     it("adds funder to array of funders", async () => {
       await fundMe.fund({ value: sendValue })
 
-      const funder = await fundMe.funders(0)
+      const funder = await fundMe.getFunder(0)
       assert.equal(funder, deployer)
     })
   })
@@ -49,8 +48,8 @@ describe("FundMe", async () => {
     let startingFundMeBalance
     beforeEach(async () => {
       await fundMe.fund({ value: sendValue })
-      const savedValue = await fundMe.addressToAmountFunded(deployer)
-      const funder = await fundMe.funders(0)
+      const savedValue = await fundMe.getAddressToAmountFunded(deployer)
+      const funder = await fundMe.getFunder(0)
 
       assert.notEqual(savedValue, 0)
       assert.notEqual(funder, constants.ZERO_ADDRESS)
@@ -106,10 +105,13 @@ describe("FundMe", async () => {
       )
       assert.equal(endingFundMeBalance, 0)
 
-      await expect(fundMe.funders(0)).to.be.reverted
+      await expect(fundMe.getFunder(0)).to.be.reverted
 
       for (let i = 1; i < numberOfFunders + 1; i++) {
-        assert.equal(await fundMe.addressToAmountFunded(accounts[i].address), 0)
+        assert.equal(
+          await fundMe.getAddressToAmountFunded(accounts[i].address),
+          0
+        )
       }
     })
 
