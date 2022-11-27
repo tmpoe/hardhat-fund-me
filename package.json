@@ -21,5 +21,12 @@
     "solidity-coverage": "^0.8.0",
     "typechain": "^8.1.0",
     "web3": "^1.8.1"
+  },
+  "scripts": {
+    "test": "yarn hardhat test",
+    "test:staging": "yarn hardhat test --network goerli",
+    "lint": "yarn solhint 'contracts/*.sol",
+    "lint:fix": "yarn solhint 'contracts/*.sol --fix",
+    "coverage": "yarn hardhat coverage"
   }
 }
