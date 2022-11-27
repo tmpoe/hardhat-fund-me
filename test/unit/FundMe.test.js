@@ -78,5 +78,41 @@ describe("FundMe", async () => {
       )
       assert.equal(endingFundMeBalance, 0)
     })
+
+    it("withdraws money from multiple funders", async () => {
+      const numberOfFunders = 5
+      const accounts = await ethers.getSigners()
+      for (let i = 1; i < numberOfFunders + 1; i++) {
+        const fundMeConnectedContract = await fundMe.connect(accounts[i])
+        fundMeConnectedContract.fund({ value: sendValue })
+      }
+
+      startingDeployerBalance = await fundMe.provider.getBalance(deployer)
+      startingFundMeBalance = await fundMe.provider.getBalance(fundMe.address)
+
+      const transactionResponse = await fundMe.withdraw()
+      const transactionReceipt = await transactionResponse.wait(1)
+      const { gasUsed, effectiveGasPrice } = transactionReceipt
+      const gasCost = gasUsed.mul(effectiveGasPrice)
+
+      const endingDeployerBalance = await fundMe.provider.getBalance(deployer)
+      const endingFundMeBalance = await fundMe.provider.getBalance(
+        fundMe.address
+      )
+
+      assert.equal(
+        endingDeployerBalance.add(gasCost).toString(),
+        startingFundMeBalance.add(startingDeployerBalance).toString()
+      )
+      assert.equal(endingFundMeBalance, 0)
+
+      await expect(fundMe.funders(0)).to.be.reverted
+
+      for (let i = 1; i < numberOfFunders + 1; i++) {
+        assert.equal(await fundMe.addressToAmountFunded(accounts[i].address), 0)
+      }
+    })
+
+    it("")
   })
 })
